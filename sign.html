@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="./Assets/Images/solaris-logo.svg">
+<title>Astra</title>
+<style>
+:root {
+    --orange:       #fa4028;
+        --orange-hover: #801a10;
+        --back-g:        #f2f2f3;
+        --text-dark:    #1C1917;
+        --font-display: 'Playfair Display', serif;
+        --font-body:    'Plus Jakarta Sans', sans-serif;
+    }
+
+
+body{
+    background: var(--back-g);
+    font-family: var(--font-body);
+    margin: 0;
+}
+
+.container{
+    width: 320px;
+    background: white;
+    padding: 25px;
+    margin: 100px auto;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+    font-family: var(--font-display);
+    color: var(--text-dark);
+}
+
+input{
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button{
+    width: 95%;
+    padding: 10px;
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+button:hover{
+    background: var(--orange-hover);
+}
+
+a{
+    color: var(--orange);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.social-btn{
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;/* space between icon & text */
+}
+
+
+.social-btn.google{
+    background: white;
+    color: var(--text-dark);
+}
+
+.social-btn.google:hover{
+    background: var(--orange-hover);
+    color: white;
+}
+
+.social-btn.apple{
+    background: white;
+    color: var(--text-dark);
+}
+
+.social-btn.apple:hover{
+    background: var(--orange-hover);
+    color: white;
+}
+
+.divider{
+    margin: 10px 0;
+    color: var(--text-dark);
+    opacity: 0.6;
+}
+#errorMessage{
+    color: red;
+    font-weight: bold;
+}
+.icon{
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN FORM -->
+<div class="container" id="loginPage">
+    <h2>Login</h2>
+    <input type="text" id="loginUser" placeholder="Username" required>
+    <input type="password" id="loginPass" placeholder="Password" required>
+    
+    <button onclick="login()">Login</button>
+
+    <p>Don't have an account? 
+        <a onclick="showSignup()">Sign Up</a>
+    </p>
+
+    <p id="errorMessage"></p>
+</div>
+
+<!-- SIGN UP FORM -->
+<div class="container" id="signupPage" style="display:none;">
+    <h2>Create Account</h2>
+
+    <!-- Social buttons -->
+    <button class="social-btn google" onclick="googleSignup()">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" class="icon"> Sign up with Google</button>
+    <button class="social-btn apple" onclick="appleSignup()">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg" class="icon"> Sign up with Apple</button>
+
+    <p class="divider">or</p>
+
+    <!-- Email signup -->
+    <input type="text" id="signupUser" placeholder="Username">
+    <input type="email" id="signupEmail" placeholder="Email">
+    <input type="password" id="signupPass" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+    <p>Forgot your password? 
+    <a onclick="alert('Password reset functionality coming soon!')">Reset it</a>
+    </p>
+    <p>Already have an account? 
+        <a onclick="showLogin()">Log In</a>
+    </p>
+
+    <p id="message"></p>
+</div>
+
+<script>
+// TOGGLE FORMS
+function showSignup(){
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("signupPage").style.display = "block";
+    document.getElementById("errorMessage").innerHTML = "";
+}
+
+function showLogin(){
+    document.getElementById("signupPage").style.display = "none";
+    document.getElementById("loginPage").style.display = "block";
+    document.getElementById("message").innerHTML = "";
+}
+
+// SIGN UP FUNCTION
+function signup(){
+let username = document.getElementById("signupUser").value.trim();
+    let email = document.getElementById("signupEmail").value.trim();
+    let password = document.getElementById("signupPass").value.trim();
+    let message = document.getElementById("message");
+    message.innerHTML = ""; // Clear previous messages
+    // REGEX for strict Gmail validation
+    let gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+    // Check empty fields
+    if(username === "" || email === "" || password === ""){
+        message.style.color = "red";
+        message.innerHTML = "⚠️ Please fill all fields";
+        return;
+    }
+
+    // Username validation (only letters )
+        let usernamePattern = /^[a-zA-Z0-9._ ]{3,}$/;
+    if(!usernamePattern.test(username)){
+        message.style.color = "red";
+        message.innerHTML = "⚠️ Username must be at least 3 characters and contain only letters";
+        return;
+    }
+
+    // Gmail validation
+    if(!gmailPattern.test(email)){
+        message.style.color = "red";
+        message.innerHTML = "⚠️ Enter a valid Gmail address (example@gmail.com)";
+        return;
+    }
+
+    // Password validation (min 6 chars)
+    if(password.length < 6){
+        message.style.color = "red";
+        message.innerHTML = "⚠️ Password must be at least 6 characters";
+        return;
+    }
+    // ✅ SAVE DATA 
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("email", email);
+
+    // ✅ SUCCESS MESSAGE
+    message.style.color = "green";
+    message.innerHTML = "✅ Account created successfully!";
+
+    // ✅ REDIRECT TO LOGIN
+    setTimeout(showLogin, 1500);
+}
+// LOGIN FUNCTION
+function login(){
+    let username = document.getElementById("loginUser").value;
+    let password = document.getElementById("loginPass").value;
+
+    let storedUser = localStorage.getItem("username");
+    let storedPass = localStorage.getItem("password");
+
+    if(username === storedUser && password === storedPass){
+        document.getElementById("errorMessage").style.color = "green";
+        document.getElementById("errorMessage").innerHTML = "Login Successful!";
+
+        // redirect to dashboard (create dashboard.html if needed)
+        setTimeout(function(){
+            window.location.href = "chat.html";
+        },1000);
+    } else{
+        document.getElementById("errorMessage").style.color = "red";
+        document.getElementById("errorMessage").innerHTML = "Incorrect username or password";
+    }
+}
+
+// SOCIAL SIGNUP BUTTONS (for demo purposes)
+function googleSignup(){
+    alert("Google Sign-Up functionality coming soon.");
+}
+
+function appleSignup(){
+    alert("Apple Sign-Up functionality coming soon");
+}
+</script>
+
+</body>
+</html>
