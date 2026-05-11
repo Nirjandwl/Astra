@@ -3,7 +3,8 @@ Think It. Ask It. Done.
 
 Your personal AI assistant that understands exactly what you mean — every single time.
 
-🔗 Live Demo: aaastraa.netlify.app
+🔗 Live Demo: aaastraa.netlify.app or astra-gray.vercel.app
+
 
 
 📖 About
