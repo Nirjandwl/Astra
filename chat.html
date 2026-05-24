@@ -480,81 +480,43 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        async function sendMessage() {
-        const input = document.getElementById("userInput");
-        const text = input.value.trim();
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
 
-        if (!text) return;
+            addMessage('user', text);
+            currentChat.push({ role: 'user', content: text });
+            input.value = '';
 
-    // Show user message
-    addMessage("user", text);
+            addMessage('typing');
 
-    // Save chat history
-    currentChat.push({
-        role: "user",
-        content: text
-    });
-
-    // Clear input
-    input.value = "";
-
-    // Show typing indicator
-    addMessage("typing");
-
-    try {
-        const response = await fetch(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
+            fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${GROQ_API_KEY}`
+                    "Authorization": `Bearer ${GROQ_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: "llama-3.3-70b-versatile",
+                    model: "llama-3.3-70b-versatile",  // free model
                     messages: [
-                        {
-                            role: "system",
-                            content: "You are Astra, a helpful AI assistant."
-                        },
+                        { role: "system", content: "You are Astra, a helpful AI assistant." },
                         ...currentChat
                     ],
                     max_tokens: 1024
                 })
-            }
-        );
-
-        // Convert response to JSON
-        const data = await response.json();
-
-        // Check API errors
-        if (!response.ok) {
-            throw new Error(data.error?.message || "API request failed");
+            })
+            .then(res => res.json())
+            .then(data => {
+                const reply = data.choices?.[0]?.message?.content || "Sorry, I couldn't respond.";
+                addMessage('bot', reply);
+                currentChat.push({ role: 'assistant', content: reply });
+            })
+            .catch(err => {
+                addMessage('bot', "Oops, something went wrong. Please try again.");
+                console.error(err);
+            });
         }
-
-        // Extract AI reply
-        const reply =
-            data.choices?.[0]?.message?.content ||
-            "Sorry, I couldn't respond.";
-
-        // Show bot message
-        addMessage("bot", reply);
-
-        // Save assistant reply
-        currentChat.push({
-            role: "assistant",
-            content: reply
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        addMessage(
-            "bot",
-            "Oops, something went wrong. Please try again."
-        );
-    }
-    }
 
         function newChat() {
             currentChat = [];
